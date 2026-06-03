@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import type { DrillParams, Operator, Mathemagician } from '../types';
+import type { ScrollParams, Operator, Mathemagician } from '../types';
 import { saveMathemagician } from '../logic/storage';
 
 interface Props {
-  params: DrillParams;
-  onStart: (params: DrillParams) => void;
+  params: ScrollParams;
+  onStart: (params: ScrollParams) => void;
   magicians: Mathemagician[];
   selectedMagicianId: string;
   onSelectMagician: (id: string) => void;
   onMagiciansChange: () => void;
 }
 
-const CommandCenter: React.FC<Props> = ({ 
+const Sanctum: React.FC<Props> = ({ 
   params: initialParams, 
   onStart, 
   magicians, 
@@ -45,7 +45,7 @@ const CommandCenter: React.FC<Props> = ({
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-amber-400">
-          <span className="text-4xl">⚔️</span> Strategic Parameters
+          <span className="text-4xl">✨</span> Arcane Elements
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {(['+', '-', '*', '/'] as Operator[]).map(op => (
@@ -66,11 +66,11 @@ const CommandCenter: React.FC<Props> = ({
 
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-purple-400">
-          <span className="text-4xl">🎯</span> Range of Engagement
+          <span className="text-4xl">🔮</span> Rune Strength
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-4">
-            <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Min Mana</label>
+            <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Min Power</label>
             <input
               type="number"
               value={params.minNumber}
@@ -79,7 +79,7 @@ const CommandCenter: React.FC<Props> = ({
             />
           </div>
           <div className="space-y-4">
-            <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Max Mana</label>
+            <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Max Power</label>
             <input
               type="number"
               value={params.maxNumber}
@@ -92,10 +92,10 @@ const CommandCenter: React.FC<Props> = ({
 
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-blue-400">
-          <span className="text-4xl">📜</span> Drill Volume
+          <span className="text-4xl">📜</span> Scroll Length
         </h2>
         <div className="space-y-4">
-          <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Total Exercises</label>
+          <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Total Runes</label>
           <input
             type="range"
             min="5"
@@ -119,7 +119,7 @@ const CommandCenter: React.FC<Props> = ({
             onChange={e => onSelectMagician(e.target.value)}
             className="w-full h-20 bg-slate-900 border-4 border-slate-700 rounded-2xl text-2xl font-bold px-6 focus:border-emerald-500 outline-none appearance-none"
           >
-            <option value="">-- Choose Recruit --</option>
+            <option value="">-- Choose Initiate --</option>
             {magicians.map(m => (
               <option key={m.id} value={m.id}>{m.name}</option>
             ))}
@@ -128,7 +128,7 @@ const CommandCenter: React.FC<Props> = ({
           <form onSubmit={handleAddMagician} className="flex gap-4">
             <input
               type="text"
-              placeholder="New Recruit Name..."
+              placeholder="New Initiate Name..."
               value={newMagicianName}
               onChange={e => setNewMagicianName(e.target.value)}
               className="flex-1 h-20 bg-slate-900 border-4 border-slate-700 rounded-2xl text-2xl font-bold px-6 focus:border-emerald-500 outline-none"
@@ -137,7 +137,7 @@ const CommandCenter: React.FC<Props> = ({
               type="submit"
               className="h-20 px-8 bg-emerald-600 hover:bg-emerald-500 text-2xl font-bold rounded-2xl border-b-8 border-emerald-800 transition-all active:border-b-0 active:translate-y-2"
             >
-              Enlist
+              Initiate
             </button>
           </form>
         </div>
@@ -147,10 +147,10 @@ const CommandCenter: React.FC<Props> = ({
         onClick={() => onStart(params)}
         className="w-full h-32 bg-amber-500 hover:bg-amber-400 text-slate-900 text-5xl font-black rounded-3xl border-b-12 border-amber-700 shadow-2xl transition-all active:border-b-0 active:translate-y-3 mb-12 flex items-center justify-center gap-6"
       >
-        <img src="/icons/small-fire.svg" className="w-16 h-16 invert" alt="" /> INITIATE MANEUVER <img src="/icons/small-fire.svg" className="w-16 h-16 invert" alt="" />
+        <img src="/icons/small-fire.svg" className="w-16 h-16 invert" alt="" /> MASTER THE SPELL <img src="/icons/small-fire.svg" className="w-16 h-16 invert" alt="" />
       </button>
     </div>
   );
 };
 
-export default CommandCenter;
+export default Sanctum;

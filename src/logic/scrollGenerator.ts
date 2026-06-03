@@ -1,7 +1,7 @@
-import type { DrillParams, Problem } from '../types';
+import type { ScrollParams, Rune } from '../types';
 
-export const generateDrill = (params: DrillParams): Problem[] => {
-  const problems: Problem[] = [];
+export const generateScroll = (params: ScrollParams): Rune[] => {
+  const runes: Rune[] = [];
   const { operators, minNumber, maxNumber, questionCount } = params;
 
   for (let i = 0; i < questionCount; i++) {
@@ -38,7 +38,7 @@ export const generateDrill = (params: DrillParams): Problem[] => {
         throw new Error(`Unsupported operator: ${operator}`);
     }
 
-    problems.push({
+    runes.push({
       id: crypto.randomUUID(),
       num1,
       num2,
@@ -47,7 +47,7 @@ export const generateDrill = (params: DrillParams): Problem[] => {
     });
   }
 
-  return problems;
+  return runes;
 };
 
 const getRandomInt = (min: number, max: number): number => {

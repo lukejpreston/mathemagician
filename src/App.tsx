@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import type { DrillParams, Mathemagician } from './types';
-import CommandCenter from './components/CommandCenter';
-import TacticalScroll from './components/TacticalScroll';
-import Barracks from './components/Barracks';
+import type { ScrollParams, Mathemagician } from './types';
+import Sanctum from './components/Sanctum';
+import ArcaneScroll from './components/ArcaneScroll';
+import WizardTower from './components/WizardTower';
 import { getMathemagicians } from './logic/storage';
 
-type View = 'command' | 'drill' | 'barracks';
+type View = 'sanctum' | 'scroll' | 'tower';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<View>('command');
-  const [params, setParams] = useState<DrillParams>({
+  const [view, setView] = useState<View>('sanctum');
+  const [params, setParams] = useState<ScrollParams>({
     operators: ['+', '-'],
     minNumber: 0,
     maxNumber: 10,
@@ -22,9 +22,9 @@ const App: React.FC = () => {
     setMagicians(getMathemagicians());
   }, []);
 
-  const handleStartDrill = (newParams: DrillParams) => {
+  const handleStartScroll = (newParams: ScrollParams) => {
     setParams(newParams);
-    setView('drill');
+    setView('scroll');
   };
 
   return (
@@ -38,41 +38,41 @@ const App: React.FC = () => {
           />
           <h1 
             className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic text-amber-500 cursor-pointer"
-            onClick={() => setView('command')}
+            onClick={() => setView('sanctum')}
           >
-            Arcane Tactical Drills
+            The Mathemagician's Grimoire
           </h1>
         </div>
         <button 
-          onClick={() => setView('barracks')}
+          onClick={() => setView('tower')}
           className="bg-slate-700 hover:bg-slate-600 text-xl px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1"
         >
-          The Barracks
+          The Wizard Tower
         </button>
       </header>
 
       <main className="max-w-4xl mx-auto">
-        {view === 'command' && (
-          <CommandCenter 
+        {view === 'sanctum' && (
+          <Sanctum 
             params={params} 
-            onStart={handleStartDrill} 
+            onStart={handleStartScroll} 
             magicians={magicians}
             selectedMagicianId={selectedMagicianId}
             onSelectMagician={setSelectedMagicianId}
             onMagiciansChange={() => setMagicians(getMathemagicians())}
           />
         )}
-        {view === 'drill' && (
-          <TacticalScroll 
+        {view === 'scroll' && (
+          <ArcaneScroll 
             params={params} 
-            onBack={() => setView('command')} 
+            onBack={() => setView('sanctum')} 
             magician={magicians.find(m => m.id === selectedMagicianId)}
           />
         )}
-        {view === 'barracks' && (
-          <Barracks 
+        {view === 'tower' && (
+          <WizardTower 
             magicians={magicians} 
-            onBack={() => setView('command')} 
+            onBack={() => setView('sanctum')} 
           />
         )}
       </main>

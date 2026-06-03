@@ -1,16 +1,16 @@
 import React, { useState, useMemo } from 'react';
-import type { DrillParams, Mathemagician } from '../types';
-import { generateDrill } from '../logic/drillGenerator';
+import type { ScrollParams, Mathemagician } from '../types';
+import { generateScroll } from '../logic/scrollGenerator';
 import { saveRecord } from '../logic/storage';
 
 interface Props {
-  params: DrillParams;
+  params: ScrollParams;
   onBack: () => void;
   magician?: Mathemagician;
 }
 
-const TacticalScroll: React.FC<Props> = ({ params, onBack, magician }) => {
-  const problems = useMemo(() => generateDrill(params), [params]);
+const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
+  const runes = useMemo(() => generateScroll(params), [params]);
   const [score, setScore] = useState<number>(0);
   const [timeTaken, setTimeTaken] = useState<number>(0);
   const [isSaved, setIsSaved] = useState(false);
@@ -22,7 +22,7 @@ const TacticalScroll: React.FC<Props> = ({ params, onBack, magician }) => {
         params,
         score,
         timeTakenSeconds: timeTaken,
-        totalQuestions: problems.length,
+        totalQuestions: runes.length,
       });
       setIsSaved(true);
     }
@@ -35,7 +35,7 @@ const TacticalScroll: React.FC<Props> = ({ params, onBack, magician }) => {
           onClick={onBack}
           className="bg-slate-700 hover:bg-slate-600 text-xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center gap-2"
         >
-          <img src="/icons/return-arrow.svg" className="w-6 h-6 invert" alt="" /> Abort Mission
+          <img src="/icons/return-arrow.svg" className="w-6 h-6 invert" alt="" /> Abandon Quest
         </button>
         <button
           onClick={() => window.print()}
@@ -55,18 +55,18 @@ const TacticalScroll: React.FC<Props> = ({ params, onBack, magician }) => {
               className="w-16 h-16 invert"
             />
             <div>
-              <h1 className="text-4xl font-black uppercase tracking-tighter">Tactical Scroll</h1>
-              <p className="text-xl font-bold italic text-slate-600">Arcane Combat Training</p>
+              <h1 className="text-4xl font-black uppercase tracking-tighter">Arcane Scroll</h1>
+              <p className="text-xl font-bold italic text-slate-600">The Mathemagician's Art</p>
             </div>
           </div>
           <div className="text-right space-y-1">
-            <p className="text-xl font-bold">Recruit: <span className="border-b-2 border-slate-400 min-w-[150px] inline-block text-center">{magician?.name || '_______________'}</span></p>
+            <p className="text-xl font-bold">Magician: <span className="border-b-2 border-slate-400 min-w-[150px] inline-block text-center">{magician?.name || '_______________'}</span></p>
             <p className="text-xl font-bold">Date: <span className="border-b-2 border-slate-400 min-w-[150px] inline-block text-center">{new Date().toLocaleDateString()}</span></p>
           </div>
         </header>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-8 mb-12">
-          {problems.map((p, idx) => (
+          {runes.map((p, idx) => (
             <div key={p.id} className="text-3xl font-bold flex items-center justify-end gap-2 pr-4">
               <span className="text-slate-400 text-base mr-auto">{idx + 1}.</span>
               <span>{p.num1}</span>
@@ -79,19 +79,19 @@ const TacticalScroll: React.FC<Props> = ({ params, onBack, magician }) => {
         </div>
 
         <footer className="mt-auto border-t-4 border-double border-slate-900 pt-8">
-          <h2 className="text-2xl font-black uppercase mb-4 italic">Performance Review</h2>
+          <h2 className="text-2xl font-black uppercase mb-4 italic">Spell Evaluation</h2>
           <div className="grid grid-cols-2 gap-8">
             <div className="border-2 border-slate-900 p-4 rounded-lg">
-              <p className="text-lg font-bold uppercase mb-2">Precision Score</p>
-              <div className="text-4xl font-black">_____ / {problems.length}</div>
+              <p className="text-lg font-bold uppercase mb-2">Rune Accuracy</p>
+              <div className="text-4xl font-black">_____ / {runes.length}</div>
             </div>
             <div className="border-2 border-slate-900 p-4 rounded-lg">
-              <p className="text-lg font-bold uppercase mb-2">Time to Completion</p>
+              <p className="text-lg font-bold uppercase mb-2">Time to Mastery</p>
               <div className="text-4xl font-black">_____ seconds</div>
             </div>
           </div>
           <div className="mt-8 text-center text-slate-400 font-mono text-sm">
-            Mana Range: {params.minNumber} to {params.maxNumber} | Operators: {params.operators.join(', ')}
+            Rune Strength: {params.minNumber} to {params.maxNumber} | Elements: {params.operators.join(', ')}
           </div>
         </footer>
       </div>
@@ -99,27 +99,27 @@ const TacticalScroll: React.FC<Props> = ({ params, onBack, magician }) => {
       {/* Recording Results - Post-Print Interface */}
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl print:hidden">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-emerald-400">
-          <span className="text-4xl">🏅</span> Record Campaign Results
+          <span className="text-4xl">🏅</span> Chronicle Spell Mastery
         </h2>
         {!magician ? (
-          <p className="text-xl text-amber-400 font-bold italic">Select a Mathemagician to record results!</p>
+          <p className="text-xl text-amber-400 font-bold italic">Select a Mathemagician to chronicle mastery!</p>
         ) : isSaved ? (
           <div className="text-center p-8">
-            <p className="text-4xl font-black text-emerald-500 mb-4">Maneuver Recorded!</p>
+            <p className="text-4xl font-black text-emerald-500 mb-4">Spell Mastered!</p>
             <button
               onClick={onBack}
               className="h-16 px-8 bg-slate-700 hover:bg-slate-600 text-2xl font-bold rounded-2xl"
             >
-              Back to Command
+              Return to Sanctum
             </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
-              <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Precision Score (out of {problems.length})</label>
+              <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Rune Accuracy (out of {runes.length})</label>
               <input
                 type="number"
-                max={problems.length}
+                max={runes.length}
                 value={score}
                 onChange={e => setScore(parseInt(e.target.value) || 0)}
                 className="w-full h-20 bg-slate-900 border-4 border-slate-700 rounded-2xl text-4xl font-black text-center focus:border-emerald-500 outline-none"
@@ -138,7 +138,7 @@ const TacticalScroll: React.FC<Props> = ({ params, onBack, magician }) => {
               onClick={handleSave}
               className="md:col-span-2 h-20 bg-emerald-600 hover:bg-emerald-500 text-2xl font-bold rounded-2xl border-b-8 border-emerald-800 transition-all active:border-b-0 active:translate-y-2"
             >
-              Save to Campaign Log
+              Save to Spell Chronicle
             </button>
           </div>
         )}
@@ -147,4 +147,4 @@ const TacticalScroll: React.FC<Props> = ({ params, onBack, magician }) => {
   );
 };
 
-export default TacticalScroll;
+export default ArcaneScroll;

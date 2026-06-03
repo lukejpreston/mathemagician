@@ -1,8 +1,8 @@
-import type { Mathemagician, CampaignRecord } from '../types';
+import type { Mathemagician, SpellRecord } from '../types';
 
 const KEYS = {
-  MATHEMAGICIANS: 'arcane_drills_magicians',
-  RECORDS: 'arcane_drills_records',
+  MATHEMAGICIANS: 'arcane_scrolls_magicians',
+  RECORDS: 'arcane_scrolls_records',
 };
 
 export const getMathemagicians = (): Mathemagician[] => {
@@ -20,18 +20,18 @@ export const saveMathemagician = (name: string): Mathemagician => {
   return newMagician;
 };
 
-export const getRecords = (mathemagicianId?: string): CampaignRecord[] => {
+export const getRecords = (mathemagicianId?: string): SpellRecord[] => {
   const data = localStorage.getItem(KEYS.RECORDS);
-  const records: CampaignRecord[] = data ? JSON.parse(data) : [];
+  const records: SpellRecord[] = data ? JSON.parse(data) : [];
   if (mathemagicianId) {
     return records.filter((r) => r.mathemagicianId === mathemagicianId);
   }
   return records;
 };
 
-export const saveRecord = (record: Omit<CampaignRecord, 'id' | 'date'>): CampaignRecord => {
+export const saveRecord = (record: Omit<SpellRecord, 'id' | 'date'>): SpellRecord => {
   const records = getRecords();
-  const newRecord: CampaignRecord = {
+  const newRecord: SpellRecord = {
     ...record,
     id: crypto.randomUUID(),
     date: new Date().toISOString(),

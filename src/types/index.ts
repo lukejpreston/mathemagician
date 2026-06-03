@@ -1,13 +1,13 @@
 export type Operator = '+' | '-' | '*' | '/';
 
-export interface DrillParams {
+export interface ScrollParams {
   operators: Operator[];
   minNumber: number;
   maxNumber: number;
   questionCount: number;
 }
 
-export interface Problem {
+export interface Rune {
   id: string;
   num1: number;
   num2: number;
@@ -15,11 +15,11 @@ export interface Problem {
   answer: number;
 }
 
-export interface CampaignRecord {
+export interface SpellRecord {
   id: string;
   date: string;
   mathemagicianId: string;
-  params: DrillParams;
+  params: ScrollParams;
   timeTakenSeconds: number;
   score: number;
   totalQuestions: number;

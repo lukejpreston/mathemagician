@@ -7,7 +7,7 @@ interface Props {
   onBack: () => void;
 }
 
-const Barracks: React.FC<Props> = ({ magicians, onBack }) => {
+const WizardTower: React.FC<Props> = ({ magicians, onBack }) => {
   const [selectedId, setSelectedId] = useState<string>(magicians[0]?.id || '');
   
   const records = useMemo(() => {
@@ -20,12 +20,12 @@ const Barracks: React.FC<Props> = ({ magicians, onBack }) => {
         onClick={onBack}
         className="bg-slate-700 hover:bg-slate-600 text-xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center gap-2"
       >
-        <img src="/icons/return-arrow.svg" className="w-6 h-6 invert" alt="" /> Return to Command
+        <img src="/icons/return-arrow.svg" className="w-6 h-6 invert" alt="" /> Return to Sanctum
       </button>
 
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-emerald-400">
-          <img src="/icons/castle.svg" className="w-10 h-10 [mix-blend-mode:screen]" alt="" /> Personnel Records
+          <img src="/icons/castle.svg" className="w-10 h-10 [mix-blend-mode:screen]" alt="" /> Magician Chronicles
         </h2>
         
         <div className="flex gap-4 overflow-x-auto pb-4">
@@ -43,14 +43,14 @@ const Barracks: React.FC<Props> = ({ magicians, onBack }) => {
             </button>
           ))}
           {magicians.length === 0 && (
-            <p className="text-slate-500 text-xl italic">No recruits enlisted yet.</p>
+            <p className="text-slate-500 text-xl italic">No magicians initiated yet.</p>
           )}
         </div>
 
         <div className="mt-8 space-y-4">
           {records.length === 0 ? (
             <div className="bg-slate-900 p-12 rounded-2xl text-center text-slate-500 italic text-2xl">
-              No campaign logs found for this recruit.
+              No spell chronicles found for this magician.
             </div>
           ) : (
             records.map(record => (
@@ -60,13 +60,13 @@ const Barracks: React.FC<Props> = ({ magicians, onBack }) => {
                   <div className="text-xl font-bold">{new Date(record.date).toLocaleDateString()}</div>
                 </div>
                 <div>
-                  <div className="text-slate-500 uppercase text-xs font-black tracking-widest mb-1">Maneuver</div>
+                  <div className="text-slate-500 uppercase text-xs font-black tracking-widest mb-1">Incantation</div>
                   <div className="text-xl font-bold">
                     {record.params.operators.join(', ')} ({record.params.minNumber} to {record.params.maxNumber})
                   </div>
                 </div>
                 <div>
-                  <div className="text-slate-500 uppercase text-xs font-black tracking-widest mb-1">Precision</div>
+                  <div className="text-slate-500 uppercase text-xs font-black tracking-widest mb-1">Accuracy</div>
                   <div className="text-3xl font-black text-amber-500">
                     {record.score} <span className="text-xl text-slate-600">/ {record.totalQuestions}</span>
                   </div>
@@ -86,4 +86,4 @@ const Barracks: React.FC<Props> = ({ magicians, onBack }) => {
   );
 };
 
-export default Barracks;
+export default WizardTower;
