@@ -1,6 +1,7 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom';
-import type { ScrollParams, Mathemagician } from './types';
+import React, { useState, useEffect, createContext, useContext, useMemo } from 'react';
+import { BrowserRouter, Routes, Route, Link, useNavigate, Navigate, useSearchParams } from 'react-router-dom';
+import qs from 'qs';
+import type { ScrollParams, Mathemagician, Operator } from './types';
 import Sanctum from './components/Sanctum';
 import ArcaneScroll from './components/ArcaneScroll';
 import WizardTower from './components/WizardTower';
@@ -78,7 +79,8 @@ const SanctumPage: React.FC = () => {
 
   const handleStartScroll = (newParams: ScrollParams) => {
     setParams(newParams);
-    navigate('/scroll');
+    const queryString = qs.stringify(newParams, { arrayFormat: 'repeat' });
+    navigate(`/scroll?${queryString}`);
   };
 
   return (
@@ -94,7 +96,31 @@ const SanctumPage: React.FC = () => {
 };
 
 const ScrollPage: React.FC = () => {
-  const { params, magicians, selectedMagicianId } = useAppContext();
+  const { params: contextParams, magicians, selectedMagicianId } = useAppContext();
+  const [searchParams] = useSearchParams();
+  
+  const params = useMemo<ScrollParams>(() => {
+    const parsed = qs.parse(searchParams.toString());
+    
+    // If we have query params, use them
+    if (Object.keys(parsed).length > 0) {
+      const operators = parsed.operators;
+      const operatorsArray: Operator[] = Array.isArray(operators) 
+        ? operators.filter((op): op is Operator => ['+', '-', '*', '/'].includes(op as string))
+        : typeof operators === 'string' && ['+', '-', '*', '/'].includes(operators)
+          ? [operators as Operator]
+          : contextParams.operators;
+      
+      return {
+        operators: operatorsArray,
+        minNumber: parsed.minNumber ? Number(parsed.minNumber) : contextParams.minNumber,
+        maxNumber: parsed.maxNumber ? Number(parsed.maxNumber) : contextParams.maxNumber,
+        questionCount: parsed.questionCount ? Number(parsed.questionCount) : contextParams.questionCount,
+      };
+    }
+    
+    return contextParams;
+  }, [searchParams, contextParams]);
   
   return (
     <ArcaneScroll 
