@@ -1,30 +1,31 @@
 import React, { useState, useMemo } from 'react';
 import type { Mathemagician } from '../types';
-import { getRecords } from '../logic/storage';
+import { getRecords, deleteMathemagician } from '../logic/storage';
 import BookPile from '../assets/icons/book-pile.svg?react'
-import ReturnArrow from '../assets/icons/return-arrow.svg?react'
 
 interface Props {
   magicians: Mathemagician[];
-  onBack: () => void;
+  onMagicianDeleted: () => void;
 }
 
-const WizardTower: React.FC<Props> = ({ magicians, onBack }) => {
+const WizardTower: React.FC<Props> = ({ magicians, onMagicianDeleted }) => {
   const [selectedId, setSelectedId] = useState<string>(magicians[0]?.id || '');
+  const [showExpellModal, setShowExpellModal] = useState(false);
   
   const records = useMemo(() => {
     return getRecords(selectedId).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [selectedId]);
 
+  const selectedMagician = magicians.find(m => m.id === selectedId);
+
+  const handleExpell = () => {
+    deleteMathemagician(selectedId);
+    setShowExpellModal(false);
+    onMagicianDeleted();
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <button
-        onClick={onBack}
-        className="bg-slate-700 hover:bg-slate-600 text-xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center gap-2"
-      >
-        <ReturnArrow className="w-6 h-6" /> Return to Sanctum
-      </button>
-
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-emerald-400">
           <BookPile className="w-10 h-10" /> Magician Chronicles
@@ -48,6 +49,15 @@ const WizardTower: React.FC<Props> = ({ magicians, onBack }) => {
             <p className="text-slate-500 text-xl italic">No magicians initiated yet.</p>
           )}
         </div>
+
+        {selectedMagician && (
+          <button
+            onClick={() => setShowExpellModal(true)}
+            className="mt-4 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+          >
+            Expell Wizard
+          </button>
+        )}
 
         <div className="mt-8 space-y-4">
           {records.length === 0 ? (
@@ -85,6 +95,31 @@ const WizardTower: React.FC<Props> = ({ magicians, onBack }) => {
           )}
         </div>
       </section>
+
+      {showExpellModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 animate-in fade-in duration-200">
+          <div className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl max-w-lg mx-4 animate-in zoom-in-95 duration-200">
+            <h3 className="text-2xl font-bold text-red-400 mb-4">Expell Wizard</h3>
+            <p className="text-xl text-slate-300 mb-6">
+              You wish to expell this Mathemagician from the tower? All their data will be lost to the annals of history (all data will be removed are you sure?)
+            </p>
+            <div className="flex gap-4 justify-end">
+              <button
+                onClick={() => setShowExpellModal(false)}
+                className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleExpell}
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+              >
+                Expell
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

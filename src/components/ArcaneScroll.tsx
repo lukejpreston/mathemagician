@@ -2,17 +2,15 @@ import React, { useState, useMemo } from 'react';
 import type { ScrollParams, Mathemagician } from '../types';
 import { generateScroll } from '../logic/scrollGenerator';
 import { saveRecord } from '../logic/storage';
-import ReturnArrow from '../assets/icons/return-arrow.svg?react'
 import ScrollUnfurled from '../assets/icons/scroll-unfurled.svg?react'
 import TiedScroll from '../assets/icons/tied-scroll.svg?react'
 
 interface Props {
   params: ScrollParams;
-  onBack: () => void;
   magician?: Mathemagician;
 }
 
-const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
+const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
   const runes = useMemo(() => generateScroll(params), [params]);
   const [score, setScore] = useState<number>(0);
   const [minutesTaken, setMinutesTaken] = useState<number>(0);
@@ -34,13 +32,7 @@ const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
 
   return (
     <div className="space-y-8 print:space-y-0 print:m-0">
-      <div className="flex justify-between items-center print:hidden">
-        <button
-          onClick={onBack}
-          className="bg-slate-700 hover:bg-slate-600 text-xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center gap-2"
-        >
-          <ReturnArrow className="w-6 h-6" /> Abandon Quest
-        </button>
+      <div className="flex justify-end items-center print:hidden">
         <button
           onClick={() => window.print()}
           className="bg-blue-600 hover:bg-blue-500 text-xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center gap-2"
@@ -106,12 +98,6 @@ const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
         ) : isSaved ? (
           <div className="text-center p-8">
             <p className="text-4xl font-black text-emerald-500 mb-4">Spell Mastered!</p>
-            <button
-              onClick={onBack}
-              className="h-16 px-8 bg-slate-700 hover:bg-slate-600 text-2xl font-bold rounded-2xl"
-            >
-              Return to Sanctum
-            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">

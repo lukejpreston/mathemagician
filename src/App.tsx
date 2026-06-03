@@ -3,12 +3,13 @@ import type { ScrollParams, Mathemagician } from './types';
 import Sanctum from './components/Sanctum';
 import ArcaneScroll from './components/ArcaneScroll';
 import WizardTower from './components/WizardTower';
+import About from './components/About';
 import { getMathemagicians } from './logic/storage';
 
 import OrbWand from './assets/icons/orb-wand.svg?react'
 import TowerFlag from './assets/icons/tower-flag.svg?react'
 
-type View = 'sanctum' | 'scroll' | 'tower';
+type View = 'sanctum' | 'scroll' | 'tower' | 'about';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('sanctum');
@@ -42,12 +43,20 @@ const App: React.FC = () => {
             Mathemagician
           </h1>
         </div>
-        <button 
-          onClick={() => setView('tower')}
-          className="w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-xl px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1"
-        >
-          <TowerFlag className="w-6 h-6 inline-block mr-2" /> Wizard Tower
-        </button>
+<div className="flex flex-col w-full md:w-auto gap-2">
+          <button 
+            onClick={() => setView('tower')}
+            className="w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-xl px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1"
+          >
+            <TowerFlag className="w-6 h-6 inline-block mr-2" /> Wizard Tower
+          </button>
+          <button 
+            onClick={() => setView('sanctum')}
+            className="w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-xl px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1"
+          >
+            Sanctum
+          </button>
+        </div>
       </header>
 
       <main className="max-w-4xl mx-auto">
@@ -64,17 +73,39 @@ const App: React.FC = () => {
         {view === 'scroll' && (
           <ArcaneScroll 
             params={params} 
-            onBack={() => setView('sanctum')} 
             magician={magicians.find(m => m.id === selectedMagicianId)}
           />
         )}
         {view === 'tower' && (
           <WizardTower 
             magicians={magicians} 
-            onBack={() => setView('sanctum')} 
+            onMagicianDeleted={() => {
+              const updated = getMathemagicians();
+              setMagicians(updated);
+              if (updated.length === 0) {
+                setView('sanctum');
+              }
+            }}
+          />
+        )}
+        {view === 'about' && (
+          <About 
+            onDeleteAll={() => {
+              setMagicians([]);
+              setSelectedMagicianId('');
+            }}
           />
         )}
       </main>
+
+      <footer className="max-w-4xl mx-auto mt-8 flex justify-center print:hidden">
+        <button
+          onClick={() => setView('about')}
+          className="w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-xl px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1"
+        >
+          About
+        </button>
+      </footer>
     </div>
   );
 };

@@ -39,3 +39,16 @@ export const saveRecord = (record: Omit<SpellRecord, 'id' | 'date'>): SpellRecor
   localStorage.setItem(KEYS.RECORDS, JSON.stringify([...records, newRecord]));
   return newRecord;
 };
+
+export const deleteMathemagician = (id: string): void => {
+  const magicians = getMathemagicians().filter((m) => m.id !== id);
+  localStorage.setItem(KEYS.MATHEMAGICIANS, JSON.stringify(magicians));
+  
+  const records = getRecords().filter((r) => r.mathemagicianId !== id);
+  localStorage.setItem(KEYS.RECORDS, JSON.stringify(records));
+};
+
+export const deleteAllMathemagicians = (): void => {
+  localStorage.removeItem(KEYS.MATHEMAGICIANS);
+  localStorage.removeItem(KEYS.RECORDS);
+};
