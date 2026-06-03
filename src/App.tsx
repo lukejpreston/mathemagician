@@ -99,6 +99,15 @@ const ScrollPage: React.FC = () => {
   const { params: contextParams, magicians, selectedMagicianId } = useAppContext();
   const [searchParams] = useSearchParams();
   
+  // Create a stable key from only the scroll-relevant params (not reveal)
+  const scrollParamsKey = useMemo(() => {
+    const operators = searchParams.getAll('operators').join(',');
+    const minNumber = searchParams.get('minNumber') || '';
+    const maxNumber = searchParams.get('maxNumber') || '';
+    const questionCount = searchParams.get('questionCount') || '';
+    return `${operators}|${minNumber}|${maxNumber}|${questionCount}`;
+  }, [searchParams]);
+  
   const params = useMemo<ScrollParams>(() => {
     const parsed = qs.parse(searchParams.toString());
     
@@ -120,7 +129,8 @@ const ScrollPage: React.FC = () => {
     }
     
     return contextParams;
-  }, [searchParams, contextParams]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrollParamsKey, contextParams]);
   
   return (
     <ArcaneScroll 

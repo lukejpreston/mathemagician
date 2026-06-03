@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import type { ScrollParams, Mathemagician } from '../types';
 import { generateScroll } from '../logic/scrollGenerator';
 import { saveRecord } from '../logic/storage';
@@ -11,11 +12,25 @@ interface Props {
 }
 
 const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
-  const runes = useMemo(() => generateScroll(params), [params]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [shuffleKey, setShuffleKey] = useState(0);
+  const runes = useMemo(() => generateScroll(params), [params, shuffleKey]);
   const [score, setScore] = useState<number>(0);
   const [minutesTaken, setMinutesTaken] = useState<number>(0);
   const [secondsTaken, setSecondsTaken] = useState<number>(0);
   const [isSaved, setIsSaved] = useState(false);
+
+  const isRevealed = searchParams.get('reveal') === 'true';
+
+  const toggleReveal = () => {
+    const newParams = new URLSearchParams(searchParams);
+    if (isRevealed) {
+      newParams.set('reveal', 'false');
+    } else {
+      newParams.set('reveal', 'true');
+    }
+    setSearchParams(newParams);
+  };
 
   const handleSave = () => {
     if (magician) {
@@ -65,7 +80,11 @@ const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
               <span className="text-slate-500 w-6 text-center">{p.operator === '*' ? '×' : p.operator === '/' ? '÷' : p.operator}</span>
               <span>{p.num2}</span>
               <span className="text-slate-500">=</span>
-              <span className="w-16 h-10 border-b-2 border-slate-300"></span>
+              {isRevealed ? (
+                <span className="w-16 h-10 text-emerald-600 text-center">{p.answer}</span>
+              ) : (
+                <span className="w-16 h-10 border-b-2 border-slate-300"></span>
+              )}
             </div>
           ))}
         </div>
@@ -141,6 +160,22 @@ const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
           </div>
         )}
       </section>
+
+      {/* Reveal/Conceal Runes Button */}
+      <div className="flex justify-center gap-4 print:hidden">
+        <button
+          onClick={toggleReveal}
+          className="bg-purple-600 hover:bg-purple-500 text-xl px-8 py-4 rounded-xl font-bold transition-colors border-b-4 border-purple-800 active:border-b-0 active:translate-y-1"
+        >
+          {isRevealed ? '🔮 Conceal the Runes' : '✨ Reveal the Runes'}
+        </button>
+        <button
+          onClick={() => setShuffleKey(k => k + 1)}
+          className="bg-amber-600 hover:bg-amber-500 text-xl px-8 py-4 rounded-xl font-bold transition-colors border-b-4 border-amber-800 active:border-b-0 active:translate-y-1"
+        >
+          🎲 Shuffle the Runes
+        </button>
+      </div>
     </div>
   );
 };
