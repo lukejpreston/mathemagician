@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import type { Mathemagician } from '../types';
 import { getRecords } from '../logic/storage';
+import Castle from '../assets/icons/castle.svg?react'
+import ReturnArrow from '../assets/icons/return-arrow.svg?react'
 
 interface Props {
   magicians: Mathemagician[];
@@ -20,12 +22,12 @@ const WizardTower: React.FC<Props> = ({ magicians, onBack }) => {
         onClick={onBack}
         className="bg-slate-700 hover:bg-slate-600 text-xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center gap-2"
       >
-        <img src="/icons/return-arrow.svg" className="w-6 h-6 invert" alt="" /> Return to Sanctum
+        <ReturnArrow className="w-6 h-6" /> Return to Sanctum
       </button>
 
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-emerald-400">
-          <img src="/icons/castle.svg" className="w-10 h-10 [mix-blend-mode:screen]" alt="" /> Magician Chronicles
+          <Castle className="w-10 h-10" /> Magician Chronicles
         </h2>
         
         <div className="flex gap-4 overflow-x-auto pb-4">

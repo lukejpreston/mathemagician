@@ -2,6 +2,9 @@ import React, { useState, useMemo } from 'react';
 import type { ScrollParams, Mathemagician } from '../types';
 import { generateScroll } from '../logic/scrollGenerator';
 import { saveRecord } from '../logic/storage';
+import ReturnArrow from '../assets/icons/return-arrow.svg?react'
+import ScrollUnfurled from '../assets/icons/scroll-unfurled.svg?react'
+import TiedScroll from '../assets/icons/tied-scroll.svg?react'
 
 interface Props {
   params: ScrollParams;
@@ -35,13 +38,13 @@ const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
           onClick={onBack}
           className="bg-slate-700 hover:bg-slate-600 text-xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center gap-2"
         >
-          <img src="/icons/return-arrow.svg" className="w-6 h-6 invert" alt="" /> Abandon Quest
+          <ReturnArrow className="w-6 h-6" /> Abandon Quest
         </button>
         <button
           onClick={() => window.print()}
           className="bg-blue-600 hover:bg-blue-500 text-xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center gap-2"
         >
-          <img src="/icons/scroll-unfurled.svg" className="w-8 h-8 [mix-blend-mode:screen]" alt="" /> Print Scroll
+          <ScrollUnfurled className="w-8 h-8" /> Print Scroll
         </button>
       </div>
 
@@ -49,11 +52,7 @@ const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
       <div className="bg-white text-slate-900 p-[20mm] rounded-none shadow-2xl mx-auto w-full max-w-[210mm] min-h-[297mm] border-2 border-slate-200 print:shadow-none print:border-0 print:p-0 print:m-0">
         <header className="border-b-4 border-double border-slate-900 pb-4 mb-8 flex justify-between items-end">
           <div className="flex items-center gap-4">
-            <img 
-              src="/icons/tied-scroll.svg" 
-              alt="" 
-              className="w-16 h-16 invert"
-            />
+            <TiedScroll className="w-16 h-16 text-black" />
             <div>
               <h1 className="text-4xl font-black uppercase tracking-tighter">Arcane Scroll</h1>
               <p className="text-xl font-bold italic text-slate-600">The Mathemagician's Art</p>

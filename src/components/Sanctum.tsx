@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import type { ScrollParams, Operator, Mathemagician } from '../types';
 import { saveMathemagician } from '../logic/storage';
 
+import SmallFire from '../assets/icons/small-fire.svg?react'
+import Sparkles from '../assets/icons/sparkles.svg?react'
+import RuneStone from '../assets/icons/rune-stone.svg?react'
+import ScrollUnfurled from '../assets/icons/scroll-unfurled.svg?react'
+import WizardFace from '../assets/icons/wizard-face.svg?react'
+
 interface Props {
   params: ScrollParams;
   onStart: (params: ScrollParams) => void;
@@ -45,7 +51,7 @@ const Sanctum: React.FC<Props> = ({
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-amber-400">
-          <span className="text-4xl">✨</span> Arcane Elements
+          <Sparkles className="w-10 h-10" /> Arcane Elements
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {(['+', '-', '*', '/'] as Operator[]).map(op => (
@@ -66,7 +72,7 @@ const Sanctum: React.FC<Props> = ({
 
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-purple-400">
-          <span className="text-4xl">🔮</span> Rune Strength
+          <RuneStone className="w-10 h-10" /> Rune Strength
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-4">
@@ -92,7 +98,7 @@ const Sanctum: React.FC<Props> = ({
 
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-blue-400">
-          <span className="text-4xl">📜</span> Scroll Length
+          <ScrollUnfurled className="w-10 h-10" /> Scroll Length
         </h2>
         <div className="space-y-4">
           <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Total Runes</label>
@@ -111,7 +117,7 @@ const Sanctum: React.FC<Props> = ({
 
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-emerald-400">
-          <span className="text-4xl">🧙‍♂️</span> Select Mathemagician
+          <WizardFace className="w-10 h-10" /> Select Mathemagician
         </h2>
         <div className="space-y-6">
           <select
@@ -147,7 +153,7 @@ const Sanctum: React.FC<Props> = ({
         onClick={() => onStart(params)}
         className="w-full h-32 bg-amber-500 hover:bg-amber-400 text-slate-900 text-5xl font-black rounded-3xl border-b-12 border-amber-700 shadow-2xl transition-all active:border-b-0 active:translate-y-3 mb-12 flex items-center justify-center gap-6"
       >
-        <img src="/icons/small-fire.svg" className="w-16 h-16 invert" alt="" /> MASTER THE SPELL <img src="/icons/small-fire.svg" className="w-16 h-16 invert" alt="" />
+        <SmallFire className="w-16 h-16 fill-black bg-transparent" /> MASTER THE SPELL <SmallFire className="w-16 h-16 fill-black bg-transparent" />
       </button>
     </div>
   );
