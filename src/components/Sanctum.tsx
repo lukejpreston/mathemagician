@@ -131,17 +131,17 @@ const Sanctum: React.FC<Props> = ({
             ))}
           </select>
 
-          <form onSubmit={handleAddMagician} className="flex gap-4">
+          <form onSubmit={handleAddMagician} className="flex flex-col md:flex-row gap-4">
             <input
               type="text"
               placeholder="New Initiate Name..."
               value={newMagicianName}
               onChange={e => setNewMagicianName(e.target.value)}
-              className="flex-1 h-20 bg-slate-900 border-4 border-slate-700 rounded-2xl text-2xl font-bold px-6 focus:border-emerald-500 outline-none"
+              className="flex-1 min-h-20 h-20 bg-slate-900 border-4 border-slate-700 rounded-2xl text-2xl font-bold px-6 focus:border-emerald-500 outline-none"
             />
             <button
               type="submit"
-              className="h-20 px-8 bg-emerald-600 hover:bg-emerald-500 text-2xl font-bold rounded-2xl border-b-8 border-emerald-800 transition-all active:border-b-0 active:translate-y-2"
+              className="w-full md:w-auto h-20 px-8 bg-emerald-600 hover:bg-emerald-500 text-2xl font-bold rounded-2xl border-b-8 border-emerald-800 transition-all active:border-b-0 active:translate-y-2"
             >
               Initiate
             </button>
@@ -151,9 +151,9 @@ const Sanctum: React.FC<Props> = ({
 
       <button
         onClick={() => onStart(params)}
-        className="w-full h-32 bg-amber-500 hover:bg-amber-400 text-slate-900 text-5xl font-black rounded-3xl border-b-12 border-amber-700 shadow-2xl transition-all active:border-b-0 active:translate-y-3 mb-12 flex items-center justify-center gap-6"
+        className="w-full h-24 bg-amber-500 hover:bg-amber-400 text-slate-900 text-2xl font-black rounded-3xl border-b-12 border-amber-700 shadow-2xl transition-all active:border-b-0 active:translate-y-3 mb-12 flex items-center justify-center gap-6"
       >
-        <SmallFire className="w-16 h-16 fill-black bg-transparent" /> MASTER THE SPELL <SmallFire className="w-16 h-16 fill-black bg-transparent" />
+        <SmallFire className="w-10 h-10 fill-black bg-transparent" /> MASTER THE SPELL <SmallFire className="w-10 h-10 fill-black bg-transparent" />
       </button>
     </div>
   );

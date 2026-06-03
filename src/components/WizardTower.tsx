@@ -30,12 +30,12 @@ const WizardTower: React.FC<Props> = ({ magicians, onBack }) => {
           <BookPile className="w-10 h-10" /> Magician Chronicles
         </h2>
         
-        <div className="flex gap-4 overflow-x-auto pb-4">
+        <div className="flex flex-col md:flex-row gap-4 md:overflow-x-auto pb-4">
           {magicians.map(m => (
             <button
               key={m.id}
               onClick={() => setSelectedId(m.id)}
-              className={`px-8 py-4 rounded-2xl text-2xl font-bold whitespace-nowrap border-b-4 transition-all ${
+              className={`w-full md:w-auto px-8 py-4 rounded-2xl text-2xl font-bold md:whitespace-nowrap border-b-4 transition-all ${
                 selectedId === m.id
                   ? 'bg-emerald-600 text-white border-emerald-800'
                   : 'bg-slate-700 text-slate-400 border-slate-900'
