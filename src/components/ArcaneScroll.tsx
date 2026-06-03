@@ -50,7 +50,7 @@ const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
       <div className="flex justify-end items-center print:hidden">
         <button
           onClick={() => window.print()}
-          className="bg-blue-600 hover:bg-blue-500 text-xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center gap-2"
+          className="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
         >
           <ScrollUnfurled className="w-8 h-8" /> Print Scroll
         </button>
@@ -58,7 +58,7 @@ const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
 
       {/* The Printable Page */}
       <div className="bg-white text-slate-900 p-[20mm] rounded-none shadow-2xl mx-auto w-full max-w-[210mm] min-h-[297mm] border-2 border-slate-200 print:shadow-none print:border-0 print:p-0 print:m-0">
-        <header className="border-b-4 border-double border-slate-900 pb-4 mb-8 flex justify-between items-end">
+        <header className="border-b-4 border-double border-slate-900 pb-4 mb-8 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
           <div className="flex items-center gap-4">
             <TiedScroll className="w-16 h-16 text-black" />
             <div>
@@ -66,13 +66,13 @@ const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
               <p className="text-xl font-bold italic text-slate-600">The Mathemagician's Art</p>
             </div>
           </div>
-          <div className="text-right space-y-1">
+          <div className="md:text-right space-y-1">
             <p className="text-xl font-bold">Magician: <span className="border-b-2 border-slate-400 min-w-[150px] inline-block text-center">{magician?.name || '_______________'}</span></p>
             <p className="text-xl font-bold">Date: <span className="border-b-2 border-slate-400 min-w-[150px] inline-block text-center">{new Date().toLocaleDateString()}</span></p>
           </div>
         </header>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-8 mb-12">
+        <div className="grid grid-cols-1 print:grid-cols-3 md:grid-cols-3 gap-y-10 gap-x-8 mb-12">
           {runes.map((p, idx) => (
             <div key={p.id} className="text-3xl font-bold flex items-center gap-2 pr-4">
               <span className="text-slate-400 text-base w-8">{idx + 1}.</span>
@@ -90,8 +90,8 @@ const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
         </div>
 
         <footer className="mt-auto border-t-4 border-double border-slate-900 pt-8">
-          <h2 className="text-2xl font-black uppercase mb-4 italic">Spell Evaluation</h2>
-          <div className="grid grid-cols-2 gap-8">
+          <h2 className="text-2xl font-black uppercase mb-4 italic hidden print:block">Spell Evaluation</h2>
+          <div className="hidden print:grid grid-cols-2 gap-8">
             <div className="border-2 border-slate-900 p-4 rounded-lg">
               <p className="text-lg font-bold uppercase mb-2">Rune Accuracy</p>
               <div className="text-4xl font-black">_____ / {runes.length}</div>

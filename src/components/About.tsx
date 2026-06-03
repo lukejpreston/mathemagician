@@ -39,6 +39,14 @@ const About: React.FC<Props> = ({ onDeleteAll }) => {
           </div>
 
           <div className="bg-slate-700/50 p-6 rounded-2xl space-y-4">
+            <h3 className="text-2xl font-bold text-amber-400">🎨 Icons</h3>
+            <p>
+              Icons provided by <a href="https://game-icons.net" target="_blank" rel="noopener noreferrer" className="text-amber-300 underline hover:text-amber-200">game-icons.net</a> under 
+              the <strong className="text-amber-300">Creative Commons 3.0 BY</strong> license.
+            </p>
+          </div>
+
+          <div className="bg-slate-700/50 p-6 rounded-2xl space-y-4">
             <h3 className="text-2xl font-bold text-purple-400">🧙 How to Use</h3>
             <ol className="list-decimal list-inside space-y-2 ml-2">
               <li>Create a magician profile in the Sanctum</li>
@@ -111,7 +119,7 @@ const About: React.FC<Props> = ({ onDeleteAll }) => {
               </p>
               <button
                 onClick={() => setShowExpellAllModal(true)}
-                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+                className="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
               >
                 Expell all Mathemagicians
               </button>

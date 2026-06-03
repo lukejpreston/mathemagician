@@ -43,16 +43,16 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
         <div className="flex flex-col w-full md:w-auto gap-2">
           <Link 
-            to="/tower"
-            className="w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-xl px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1 text-center"
-          >
-            <TowerFlag className="w-6 h-6 inline-block mr-2" /> Wizard Tower
-          </Link>
-          <Link 
             to="/sanctum"
             className="w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-xl px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1 text-center"
           >
             Sanctum
+          </Link>
+          <Link 
+            to="/tower"
+            className="w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-xl px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1 text-center"
+          >
+            <TowerFlag className="w-6 h-6 inline-block mr-2" /> Wizard Tower
           </Link>
         </div>
       </header>
@@ -142,17 +142,12 @@ const ScrollPage: React.FC = () => {
 
 const TowerPage: React.FC = () => {
   const { refreshMagicians, magicians } = useAppContext();
-  const navigate = useNavigate();
 
   return (
     <WizardTower 
       magicians={magicians} 
       onMagicianDeleted={() => {
-        const updated = getMathemagicians();
         refreshMagicians();
-        if (updated.length === 0) {
-          navigate('/sanctum');
-        }
       }}
     />
   );

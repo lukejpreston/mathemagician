@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import type { Mathemagician } from '../types';
-import { getRecords, deleteMathemagician } from '../logic/storage';
+import { getRecords, deleteMathemagician, saveMathemagician } from '../logic/storage';
 import BookPile from '../assets/icons/book-pile.svg?react'
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
 const WizardTower: React.FC<Props> = ({ magicians, onMagicianDeleted }) => {
   const [selectedId, setSelectedId] = useState<string>(magicians[0]?.id || '');
   const [showExpellModal, setShowExpellModal] = useState(false);
+  const [newMagicianName, setNewMagicianName] = useState('');
   
   const records = useMemo(() => {
     return getRecords(selectedId).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -21,7 +22,20 @@ const WizardTower: React.FC<Props> = ({ magicians, onMagicianDeleted }) => {
   const handleExpell = () => {
     deleteMathemagician(selectedId);
     setShowExpellModal(false);
+    // Reset selection to first remaining magician or empty
+    const remainingMagicians = magicians.filter(m => m.id !== selectedId);
+    setSelectedId(remainingMagicians[0]?.id || '');
     onMagicianDeleted();
+  };
+
+  const handleAddMagician = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newMagicianName.trim()) {
+      const newMagician = saveMathemagician(newMagicianName.trim());
+      onMagicianDeleted();
+      setSelectedId(newMagician.id);
+      setNewMagicianName('');
+    }
   };
 
   return (
@@ -50,14 +64,21 @@ const WizardTower: React.FC<Props> = ({ magicians, onMagicianDeleted }) => {
           )}
         </div>
 
-        {selectedMagician && (
+        <form onSubmit={handleAddMagician} className="flex flex-col md:flex-row gap-4 mt-4">
+          <input
+            type="text"
+            placeholder="New Initiate Name..."
+            value={newMagicianName}
+            onChange={e => setNewMagicianName(e.target.value)}
+            className="flex-1 min-h-20 h-20 bg-slate-900 border-4 border-slate-700 rounded-2xl text-2xl font-bold px-6 focus:border-emerald-500 outline-none"
+          />
           <button
-            onClick={() => setShowExpellModal(true)}
-            className="mt-4 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+            type="submit"
+            className="w-full md:w-auto h-20 px-8 bg-emerald-600 hover:bg-emerald-500 text-2xl font-bold rounded-2xl border-b-8 border-emerald-800 transition-all active:border-b-0 active:translate-y-2"
           >
-            Expell Wizard
+            Initiate
           </button>
-        )}
+        </form>
 
         <div className="mt-8 space-y-4">
           {records.length === 0 ? (
@@ -94,6 +115,17 @@ const WizardTower: React.FC<Props> = ({ magicians, onMagicianDeleted }) => {
             ))
           )}
         </div>
+
+        {selectedMagician && (
+          <div className="flex justify-end mt-8">
+            <button
+              onClick={() => setShowExpellModal(true)}
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+            >
+              Expell Wizard
+            </button>
+          </div>
+        )}
       </section>
 
       {showExpellModal && (
