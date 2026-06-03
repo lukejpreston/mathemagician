@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { Mathemagician } from '../types';
 import { getRecords } from '../logic/storage';
-import Castle from '../assets/icons/castle.svg?react'
+import BookPile from '../assets/icons/book-pile.svg?react'
 import ReturnArrow from '../assets/icons/return-arrow.svg?react'
 
 interface Props {
@@ -27,7 +27,7 @@ const WizardTower: React.FC<Props> = ({ magicians, onBack }) => {
 
       <section className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl">
         <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-emerald-400">
-          <Castle className="w-10 h-10" /> Magician Chronicles
+          <BookPile className="w-10 h-10" /> Magician Chronicles
         </h2>
         
         <div className="flex gap-4 overflow-x-auto pb-4">
@@ -76,7 +76,8 @@ const WizardTower: React.FC<Props> = ({ magicians, onBack }) => {
                 <div>
                   <div className="text-slate-500 uppercase text-xs font-black tracking-widest mb-1">Time Taken</div>
                   <div className="text-3xl font-black text-blue-500">
-                    {record.timeTakenSeconds} <span className="text-xl text-slate-600">sec</span>
+                    {Math.floor(record.timeTakenSeconds / 60)} <span className="text-xl text-slate-600">min</span>{' '}
+                    {record.timeTakenSeconds % 60} <span className="text-xl text-slate-600">sec</span>
                   </div>
                 </div>
               </div>

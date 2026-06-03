@@ -15,7 +15,8 @@ interface Props {
 const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
   const runes = useMemo(() => generateScroll(params), [params]);
   const [score, setScore] = useState<number>(0);
-  const [timeTaken, setTimeTaken] = useState<number>(0);
+  const [minutesTaken, setMinutesTaken] = useState<number>(0);
+  const [secondsTaken, setSecondsTaken] = useState<number>(0);
   const [isSaved, setIsSaved] = useState(false);
 
   const handleSave = () => {
@@ -24,7 +25,7 @@ const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
         mathemagicianId: magician.id,
         params,
         score,
-        timeTakenSeconds: timeTaken,
+        timeTakenSeconds: minutesTaken * 60 + secondsTaken,
         totalQuestions: runes.length,
       });
       setIsSaved(true);
@@ -66,8 +67,8 @@ const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-8 mb-12">
           {runes.map((p, idx) => (
-            <div key={p.id} className="text-3xl font-bold flex items-center justify-end gap-2 pr-4">
-              <span className="text-slate-400 text-base mr-auto">{idx + 1}.</span>
+            <div key={p.id} className="text-3xl font-bold flex items-center gap-2 pr-4">
+              <span className="text-slate-400 text-base w-8">{idx + 1}.</span>
               <span>{p.num1}</span>
               <span className="text-slate-500 w-6 text-center">{p.operator === '*' ? '×' : p.operator === '/' ? '÷' : p.operator}</span>
               <span>{p.num2}</span>
@@ -86,7 +87,7 @@ const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
             </div>
             <div className="border-2 border-slate-900 p-4 rounded-lg">
               <p className="text-lg font-bold uppercase mb-2">Time to Mastery</p>
-              <div className="text-4xl font-black">_____ seconds</div>
+              <div className="text-4xl font-black">_____ min _____ sec</div>
             </div>
           </div>
           <div className="mt-8 text-center text-slate-400 font-mono text-sm">
@@ -113,9 +114,9 @@ const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
             <div className="space-y-4">
-              <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Rune Accuracy (out of {runes.length})</label>
+              <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Rune Accuracy<br />(out of {runes.length})</label>
               <input
                 type="number"
                 max={runes.length}
@@ -125,17 +126,29 @@ const ArcaneScroll: React.FC<Props> = ({ params, onBack, magician }) => {
               />
             </div>
             <div className="space-y-4">
-              <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Time Taken (seconds)</label>
+              <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Minutes</label>
               <input
                 type="number"
-                value={timeTaken}
-                onChange={e => setTimeTaken(parseInt(e.target.value) || 0)}
+                min={0}
+                value={minutesTaken}
+                onChange={e => setMinutesTaken(parseInt(e.target.value) || 0)}
+                className="w-full h-20 bg-slate-900 border-4 border-slate-700 rounded-2xl text-4xl font-black text-center focus:border-emerald-500 outline-none"
+              />
+            </div>
+            <div className="space-y-4">
+              <label className="block text-xl font-bold uppercase tracking-wider text-slate-400">Seconds</label>
+              <input
+                type="number"
+                min={0}
+                max={59}
+                value={secondsTaken}
+                onChange={e => setSecondsTaken(parseInt(e.target.value) || 0)}
                 className="w-full h-20 bg-slate-900 border-4 border-slate-700 rounded-2xl text-4xl font-black text-center focus:border-emerald-500 outline-none"
               />
             </div>
             <button
               onClick={handleSave}
-              className="md:col-span-2 h-20 bg-emerald-600 hover:bg-emerald-500 text-2xl font-bold rounded-2xl border-b-8 border-emerald-800 transition-all active:border-b-0 active:translate-y-2"
+              className="md:col-span-3 h-20 bg-emerald-600 hover:bg-emerald-500 text-2xl font-bold rounded-2xl border-b-8 border-emerald-800 transition-all active:border-b-0 active:translate-y-2"
             >
               Save to Spell Chronicle
             </button>

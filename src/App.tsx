@@ -6,6 +6,7 @@ import WizardTower from './components/WizardTower';
 import { getMathemagicians } from './logic/storage';
 
 import OrbWand from './assets/icons/orb-wand.svg?react'
+import TowerFlag from './assets/icons/tower-flag.svg?react'
 
 type View = 'sanctum' | 'scroll' | 'tower';
 
@@ -31,7 +32,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 font-sans p-4 md:p-8">
-      <header className="max-w-4xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <header className="max-w-4xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-center gap-4 print:hidden">
         <div className="flex items-center gap-4">
           <OrbWand className="w-16 h-16 md:w-20 md:h-20" />
           <h1 
@@ -45,7 +46,7 @@ const App: React.FC = () => {
           onClick={() => setView('tower')}
           className="w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-xl px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1"
         >
-          The Wizard Tower
+          <TowerFlag className="w-6 h-6 inline-block mr-2" /> Wizard Tower
         </button>
       </header>
 
