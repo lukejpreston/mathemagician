@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import type { Mathemagician } from '../types';
-import { getRecords, deleteMathemagician, saveMathemagician } from '../logic/storage';
+import type { Mathemagician, Operator } from '../types';
+import { getRecords, deleteMathemagician, saveMathemagician, saveRecord } from '../logic/storage';
 import BookPile from '../assets/icons/book-pile.svg?react'
 
 interface Props {
@@ -12,10 +12,21 @@ const WizardTower: React.FC<Props> = ({ magicians, onMagicianDeleted }) => {
   const [selectedId, setSelectedId] = useState<string>(magicians[0]?.id || '');
   const [showExpellModal, setShowExpellModal] = useState(false);
   const [newMagicianName, setNewMagicianName] = useState('');
+  const [showAddScrollModal, setShowAddScrollModal] = useState(false);
+  const [scrollForm, setScrollForm] = useState({
+    operators: ['+'] as Operator[],
+    minNumber: 1,
+    maxNumber: 10,
+    questionCount: 10,
+    score: 0,
+    timeTakenMinutes: 0,
+    timeTakenSeconds: 0,
+  });
+  const [recordsVersion, setRecordsVersion] = useState(0);
   
   const records = useMemo(() => {
     return getRecords(selectedId).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [selectedId]);
+  }, [selectedId, recordsVersion]);
 
   const selectedMagician = magicians.find(m => m.id === selectedId);
 
@@ -36,6 +47,42 @@ const WizardTower: React.FC<Props> = ({ magicians, onMagicianDeleted }) => {
       setSelectedId(newMagician.id);
       setNewMagicianName('');
     }
+  };
+
+  const handleOperatorToggle = (op: Operator) => {
+    setScrollForm(prev => {
+      const newOps = prev.operators.includes(op)
+        ? prev.operators.filter(o => o !== op)
+        : [...prev.operators, op];
+      return { ...prev, operators: newOps.length > 0 ? newOps : prev.operators };
+    });
+  };
+
+  const handleAddScrollData = (e: React.FormEvent) => {
+    e.preventDefault();
+    saveRecord({
+      mathemagicianId: selectedId,
+      params: {
+        operators: scrollForm.operators,
+        minNumber: scrollForm.minNumber,
+        maxNumber: scrollForm.maxNumber,
+        questionCount: scrollForm.questionCount,
+      },
+      score: scrollForm.score,
+      totalQuestions: scrollForm.questionCount,
+      timeTakenSeconds: scrollForm.timeTakenMinutes * 60 + scrollForm.timeTakenSeconds,
+    });
+    setShowAddScrollModal(false);
+    setScrollForm({
+      operators: ['+'],
+      minNumber: 1,
+      maxNumber: 10,
+      questionCount: 10,
+      score: 0,
+      timeTakenMinutes: 0,
+      timeTakenSeconds: 0,
+    });
+    setRecordsVersion(v => v + 1);
   };
 
   return (
@@ -117,10 +164,16 @@ const WizardTower: React.FC<Props> = ({ magicians, onMagicianDeleted }) => {
         </div>
 
         {selectedMagician && (
-          <div className="flex justify-end mt-8">
+          <div className="flex justify-end gap-4 mt-8">
+            <button
+              onClick={() => setShowAddScrollModal(true)}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold border-b-4 border-emerald-800 transition-all active:border-b-0 active:translate-y-1"
+            >
+              Add Scroll Data
+            </button>
             <button
               onClick={() => setShowExpellModal(true)}
-              className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold border-b-4 border-red-800 transition-all active:border-b-0 active:translate-y-1"
             >
               Expell Wizard
             </button>
@@ -138,17 +191,124 @@ const WizardTower: React.FC<Props> = ({ magicians, onMagicianDeleted }) => {
             <div className="flex gap-4 justify-end">
               <button
                 onClick={() => setShowExpellModal(false)}
-                className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+                className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1"
               >
                 Cancel
               </button>
               <button
                 onClick={handleExpell}
-                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold border-b-4 border-red-800 transition-all active:border-b-0 active:translate-y-1"
               >
                 Expell
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showAddScrollModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 animate-in fade-in duration-200">
+          <div className="bg-slate-800 p-8 rounded-3xl border-4 border-slate-700 shadow-2xl max-w-2xl mx-4 animate-in zoom-in-95 duration-200">
+            <h3 className="text-2xl font-bold text-emerald-400 mb-6">Add Scroll Data</h3>
+            <form onSubmit={handleAddScrollData} className="space-y-6">
+              <div>
+                <label className="text-slate-400 uppercase text-xs font-black tracking-widest mb-2 block">Incantations Used</label>
+                <div className="flex gap-2">
+                  {(['+', '-', '*', '/'] as Operator[]).map(op => (
+                    <button
+                      key={op}
+                      type="button"
+                      onClick={() => handleOperatorToggle(op)}
+                      className={`w-14 h-14 rounded-xl text-2xl font-bold transition-all ${
+                        scrollForm.operators.includes(op)
+                          ? 'bg-emerald-600 text-white border-2 border-emerald-400'
+                          : 'bg-slate-700 text-slate-400 border-2 border-slate-600'
+                      }`}
+                    >
+                      {op}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-slate-400 uppercase text-xs font-black tracking-widest mb-2 block">Min Number</label>
+                  <input
+                    type="number"
+                    value={scrollForm.minNumber}
+                    onChange={e => setScrollForm(prev => ({ ...prev, minNumber: parseInt(e.target.value) || 0 }))}
+                    className="w-full h-14 bg-slate-900 border-2 border-slate-700 rounded-xl text-xl font-bold px-4 focus:border-emerald-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-400 uppercase text-xs font-black tracking-widest mb-2 block">Max Number</label>
+                  <input
+                    type="number"
+                    value={scrollForm.maxNumber}
+                    onChange={e => setScrollForm(prev => ({ ...prev, maxNumber: parseInt(e.target.value) || 0 }))}
+                    className="w-full h-14 bg-slate-900 border-2 border-slate-700 rounded-xl text-xl font-bold px-4 focus:border-emerald-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-slate-400 uppercase text-xs font-black tracking-widest mb-2 block">Total Questions</label>
+                  <input
+                    type="number"
+                    value={scrollForm.questionCount}
+                    onChange={e => setScrollForm(prev => ({ ...prev, questionCount: parseInt(e.target.value) || 0 }))}
+                    className="w-full h-14 bg-slate-900 border-2 border-slate-700 rounded-xl text-xl font-bold px-4 focus:border-emerald-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-400 uppercase text-xs font-black tracking-widest mb-2 block">Score (Correct)</label>
+                  <input
+                    type="number"
+                    value={scrollForm.score}
+                    onChange={e => setScrollForm(prev => ({ ...prev, score: parseInt(e.target.value) || 0 }))}
+                    className="w-full h-14 bg-slate-900 border-2 border-slate-700 rounded-xl text-xl font-bold px-4 focus:border-emerald-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-slate-400 uppercase text-xs font-black tracking-widest mb-2 block">Time Taken</label>
+                <div className="flex gap-4 items-center">
+                  <input
+                    type="number"
+                    value={scrollForm.timeTakenMinutes}
+                    onChange={e => setScrollForm(prev => ({ ...prev, timeTakenMinutes: parseInt(e.target.value) || 0 }))}
+                    className="w-24 h-14 bg-slate-900 border-2 border-slate-700 rounded-xl text-xl font-bold px-4 focus:border-emerald-500 outline-none"
+                  />
+                  <span className="text-slate-400 font-bold">min</span>
+                  <input
+                    type="number"
+                    value={scrollForm.timeTakenSeconds}
+                    onChange={e => setScrollForm(prev => ({ ...prev, timeTakenSeconds: parseInt(e.target.value) || 0 }))}
+                    className="w-24 h-14 bg-slate-900 border-2 border-slate-700 rounded-xl text-xl font-bold px-4 focus:border-emerald-500 outline-none"
+                  />
+                  <span className="text-slate-400 font-bold">sec</span>
+                </div>
+              </div>
+
+              <div className="flex gap-4 justify-end pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAddScrollModal(false)}
+                  className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold border-b-4 border-emerald-800 transition-all active:border-b-0 active:translate-y-1"
+                >
+                  Add Record
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

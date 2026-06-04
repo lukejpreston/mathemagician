@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { ScrollParams, Mathemagician } from '../types';
 import { generateScroll } from '../logic/scrollGenerator';
@@ -14,13 +14,75 @@ interface Props {
 const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [shuffleKey, setShuffleKey] = useState(0);
-  const runes = useMemo(() => generateScroll(params), [params, shuffleKey]);
+  const runes = useMemo(() => generateScroll(params), [params, shuffleKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const [score, setScore] = useState<number>(0);
   const [minutesTaken, setMinutesTaken] = useState<number>(0);
   const [secondsTaken, setSecondsTaken] = useState<number>(0);
   const [isSaved, setIsSaved] = useState(false);
 
+  // Timer state
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const timerRef = useRef<number | null>(null);
+
+  // User answers state
+  const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const isRevealed = searchParams.get('reveal') === 'true';
+
+  // Timer effect
+  useEffect(() => {
+    if (isTimerRunning) {
+      timerRef.current = window.setInterval(() => {
+        setElapsedSeconds(prev => prev + 1);
+      }, 1000);
+    } else if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isTimerRunning]);
+
+  const formatTime = (totalSeconds: number) => {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return { mins, secs, display: `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}` };
+  };
+
+  const handleStartTimer = () => {
+    setIsTimerRunning(true);
+  };
+
+  const handleShuffle = () => {
+    setShuffleKey(k => k + 1);
+    setUserAnswers({});
+    setIsSubmitted(false);
+    setElapsedSeconds(0);
+    setIsTimerRunning(false);
+  };
+
+  const handleAnswerChange = (runeId: string, value: string) => {
+    setUserAnswers(prev => ({ ...prev, [runeId]: value }));
+  };
+
+  const handleCastSpell = () => {
+    setIsTimerRunning(false);
+    setIsSubmitted(true);
+    
+    // Calculate score
+    const correctCount = runes.filter(rune => {
+      const userAnswer = userAnswers[rune.id];
+      return userAnswer !== undefined && parseInt(userAnswer) === rune.answer;
+    }).length;
+
+    // Auto-fill the score and time values
+    const time = formatTime(elapsedSeconds);
+    setScore(correctCount);
+    setMinutesTaken(time.mins);
+    setSecondsTaken(time.secs);
+  };
 
   const toggleReveal = () => {
     const newParams = new URLSearchParams(searchParams);
@@ -47,10 +109,28 @@ const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
 
   return (
     <div className="space-y-8 print:space-y-0 print:m-0">
-      <div className="flex justify-end items-center print:hidden">
+      <div className="flex justify-between items-center gap-4 print:hidden">
+        {/* Timer and Start Button */}
+        <div className="flex items-center gap-4">
+          {!isTimerRunning && !isSubmitted && (
+            <button
+              onClick={handleStartTimer}
+              className="bg-emerald-600 hover:bg-emerald-500 text-xl px-8 py-4 rounded-xl font-bold border-b-4 border-emerald-800 transition-all active:border-b-0 active:translate-y-1 flex items-center justify-center gap-2"
+            >
+              ⏱️ Start Timer
+            </button>
+          )}
+          {(isTimerRunning || isSubmitted) && (
+            <div className="bg-slate-800 border-4 border-slate-700 px-8 py-4 rounded-xl">
+              <span className="text-3xl font-mono font-bold text-emerald-400">
+                {formatTime(elapsedSeconds).display}
+              </span>
+            </div>
+          )}
+        </div>
         <button
           onClick={() => window.print()}
-          className="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
+          className="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-xl px-8 py-4 rounded-xl font-bold border-b-4 border-blue-800 transition-all active:border-b-0 active:translate-y-1 flex items-center justify-center gap-2"
         >
           <ScrollUnfurled className="w-8 h-8" /> Print Scroll
         </button>
@@ -63,7 +143,6 @@ const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
             <TiedScroll className="w-16 h-16 text-black" />
             <div>
               <h1 className="text-4xl font-black uppercase tracking-tighter">Arcane Scroll</h1>
-              <p className="text-xl font-bold italic text-slate-600">The Mathemagician's Art</p>
             </div>
           </div>
           <div className="md:text-right space-y-1">
@@ -72,22 +151,58 @@ const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 print:grid-cols-3 md:grid-cols-3 gap-y-10 gap-x-8 mb-12">
-          {runes.map((p, idx) => (
-            <div key={p.id} className="text-3xl font-bold flex items-center gap-2 pr-4">
-              <span className="text-slate-400 text-base w-8">{idx + 1}.</span>
-              <span>{p.num1}</span>
-              <span className="text-slate-500 w-6 text-center">{p.operator === '*' ? '×' : p.operator === '/' ? '÷' : p.operator}</span>
-              <span>{p.num2}</span>
-              <span className="text-slate-500">=</span>
-              {isRevealed ? (
-                <span className="w-16 h-10 text-emerald-600 text-center">{p.answer}</span>
-              ) : (
-                <span className="w-16 h-10 border-b-2 border-slate-300"></span>
-              )}
-            </div>
-          ))}
+        <div className="grid grid-cols-1 print:grid-cols-3 md:grid-cols-3 gap-y-10 gap-x-4 mb-12">
+          {runes.map((p, idx) => {
+            const userAnswer = userAnswers[p.id];
+            const isCorrect = userAnswer !== undefined && parseInt(userAnswer) === p.answer;
+            
+            return (
+              <div key={p.id} className="text-3xl font-bold flex items-center gap-1 min-w-0">
+                <span className="text-slate-400 text-base w-6 shrink-0">{idx + 1}.</span>
+                <span className="w-8 text-right shrink-0">{p.num1}</span>
+                <span className="text-slate-500 w-5 text-center shrink-0">{p.operator === '*' ? '×' : p.operator === '/' ? '÷' : p.operator}</span>
+                <span className="w-8 text-left shrink-0">{p.num2}</span>
+                <span className="text-slate-500 shrink-0">=</span>
+                {isRevealed ? (
+                  <span className="w-12 h-10 text-emerald-600 text-center shrink-0">{p.answer}</span>
+                ) : isSubmitted ? (
+                  <span className="flex items-center gap-1 shrink-0">
+                    <span className={`text-2xl ${isCorrect ? 'text-emerald-600' : 'text-red-600'}`}>
+                      {isCorrect ? '✓' : '✗'}
+                    </span>
+                    <span className={`${isCorrect ? 'text-emerald-600' : 'text-red-600'}`}>
+                      {p.answer}
+                    </span>
+                  </span>
+                ) : (
+                  <>
+                    {/* Printable blank space */}
+                    <span className="w-12 h-10 border-b-2 border-slate-300 hidden print:inline-block shrink-0"></span>
+                    {/* Interactive input (hidden on print) */}
+                    <input
+                      type="number"
+                      value={userAnswer || ''}
+                      onChange={(e) => handleAnswerChange(p.id, e.target.value)}
+                      className="w-16 h-10 border-2 border-slate-300 rounded text-center text-2xl print:hidden focus:border-purple-500 focus:outline-none shrink-0"
+                    />
+                  </>
+                )}
+              </div>
+            );
+          })}
         </div>
+
+        {/* Cast Spell Button (hidden on print) */}
+        {!isSubmitted && (
+          <div className="mb-8 print:hidden">
+            <button
+              onClick={handleCastSpell}
+              className="w-full text-white bg-purple-600 hover:bg-purple-500 text-2xl px-8 py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2 border-b-4 border-purple-800 active:border-b-0 active:translate-y-1"
+            >
+              🪄 Cast Spell
+            </button>
+          </div>
+        )}
 
         <footer className="mt-auto border-t-4 border-double border-slate-900 pt-8">
           <h2 className="text-2xl font-black uppercase mb-4 italic hidden print:block">Spell Evaluation</h2>
@@ -101,6 +216,19 @@ const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
               <div className="text-4xl font-black">_____ min _____ sec</div>
             </div>
           </div>
+          {/* Screen-only results (shown after submission) */}
+          {isSubmitted && (
+            <div className="grid grid-cols-2 gap-8 print:hidden">
+              <div className="border-2 border-slate-900 p-4 rounded-lg">
+                <p className="text-lg font-bold uppercase mb-2">Rune Accuracy</p>
+                <div className="text-4xl font-black">{score} / {runes.length}</div>
+              </div>
+              <div className="border-2 border-slate-900 p-4 rounded-lg">
+                <p className="text-lg font-bold uppercase mb-2">Time to Mastery</p>
+                <div className="text-4xl font-black">{minutesTaken} min {secondsTaken} sec</div>
+              </div>
+            </div>
+          )}
           <div className="mt-8 text-center text-slate-400 font-mono text-sm">
             Rune Strength: {params.minNumber} to {params.maxNumber} | Elements: {params.operators.join(', ')}
           </div>
@@ -170,7 +298,7 @@ const ArcaneScroll: React.FC<Props> = ({ params, magician }) => {
           {isRevealed ? '🔮 Conceal the Runes' : '✨ Reveal the Runes'}
         </button>
         <button
-          onClick={() => setShuffleKey(k => k + 1)}
+          onClick={handleShuffle}
           className="bg-amber-600 hover:bg-amber-500 text-xl px-8 py-4 rounded-xl font-bold transition-colors border-b-4 border-amber-800 active:border-b-0 active:translate-y-1"
         >
           🎲 Shuffle the Runes

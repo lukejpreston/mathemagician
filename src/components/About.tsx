@@ -119,7 +119,7 @@ const About: React.FC<Props> = ({ onDeleteAll }) => {
               </p>
               <button
                 onClick={() => setShowExpellAllModal(true)}
-                className="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+                className="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold border-b-4 border-red-800 transition-all active:border-b-0 active:translate-y-1"
               >
                 Expell all Mathemagicians
               </button>
@@ -142,13 +142,13 @@ const About: React.FC<Props> = ({ onDeleteAll }) => {
             <div className="flex gap-4 justify-end">
               <button
                 onClick={() => setShowExpellAllModal(false)}
-                className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+                className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-bold border-b-4 border-slate-800 transition-all active:border-b-0 active:translate-y-1"
               >
                 Cancel
               </button>
               <button
                 onClick={handleExpellAll}
-                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold transition-colors"
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold border-b-4 border-red-800 transition-all active:border-b-0 active:translate-y-1"
               >
                 Expell All
               </button>
